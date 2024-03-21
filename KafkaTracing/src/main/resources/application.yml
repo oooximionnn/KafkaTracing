@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: kafkatracing
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        spring.json.use.type.headers: true
+logging:
+  level:
+    ru:
+      nationallottery: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [${spring.application.name:-},%X{traceId:-},%X{spanId:-}] 0 --- [%15.80t] %-40.40logger{39} : %msg%n"
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      produce: b3
+      consume: b3
+#      type: b3,w3c
+  endpoints:
+    web:
+      exposure:
+        include:
+          - flyway
+          - health
+          - httptrace
+          - info
+          - loggers
+          - metrics
+          - prometheus
+          - beans
+    jmx:
+      exposure:
+        include:
+          - flyway
+          - health
+          - httptrace
+          - info
+          - loggers
+          - metrics
+          - prometheus
+          - auditevents
+          - beans
+          - conditions
+          - env
+          - httpexchanges
+          - mappings
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        greeting: true
+        http:
+          server:
+            requests: true
